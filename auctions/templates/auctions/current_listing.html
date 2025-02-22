@@ -1,0 +1,111 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+
+
+    {% if user.is_authenticated and listing.is_active %}
+
+    {% if message %}
+    <div role="alert">
+        <h6>{{message}}</h6>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% if is_owner %}
+            <form action="{% url 'close_auction' listing.id %}" method="post">
+                {% csrf_token %}
+                
+                <input type="submit" value="Close Auction" class="mx-3">
+
+            </form>
+
+        {% endif %}
+
+        <br>
+
+        {% if watchlist %}
+            <form action="{% url 'remove' listing.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="mx-3">remove from watchlist</button>
+            </form>
+        {% else %}
+            <form action="{% url 'add' listing.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="mx-3">add to watchlist</button>
+            </form>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if not listing.is_active %}
+        {% if user_is_winner %}
+        <div role="alert">
+            <h6>Congratulations!! You won the auction</h6>
+        </div>
+        {% else %}
+            <h6>Auction Winner: {{bid.owner.username}}</h6>
+        {% endif %}
+    {% endif %}
+
+
+    <hr>
+    <h2>Listing: {{listing.name}}</h2>
+    <img style="width: 10rem;" class="card-img-top" src="{{listing.img_url}}" alt="Card image cap">
+    <br>
+    <p>Description: {{listing.description}}</p>
+    <p>Initial Price: ${{listing.price}}</p>
+    {% if not bid %}
+        <p>No bids so far!! </p>
+    {% else %}
+        <p>Bid: ${{bid.bid_value}}</p>
+    {% endif %}
+    
+
+    <h6>Listed by- {{listing.owner}}</h6>
+    <h6>Bid is Active: {{listing.is_active}}</h6>
+    <hr>
+    <br>
+
+    
+    {% if user.is_authenticated and listing.is_active %}
+        <h5>Add Bid: </h5>
+        <form action="{% url 'add_bid' listing.id %}" method="post">
+            {% csrf_token %}
+            <label for="">Bid: $</label>
+            <input type="number" name="bid_value">
+            <input type="submit" value="Add">
+
+        </form>
+        {% if updated %}
+        <h6>Bid Placed Successfully!! </h6>
+        {% else %}
+        <h6>Bid Failed!! </h6>
+        {% endif %}
+    {% endif %}
+
+
+    <h5>Comments: </h5>
+    {% if user.is_authenticated %}
+        
+        <form action="{% url 'comment' listing.id %}" method="post">
+            {% csrf_token %}
+            <label for="">Comment</label>
+            <input type="text" name="comment">
+            <input type="submit" value="Post">
+
+        </form>
+    {% endif %}
+    <ul>
+    {% for comment in comments %}
+        <li>{{comment.comment}} <br> posted by- <strong>{{comment.owner.username}}</strong></li>
+        <hr>
+    {% endfor %}
+    </ul>
+
+    {% if not comments %}
+    <p>No comments yet!! </p>
+    {% endif %}
+
+{% endblock %}

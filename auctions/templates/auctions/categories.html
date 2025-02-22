@@ -1,0 +1,62 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings: {{category}}</h2>
+
+
+    <form action="{% url 'categories' %}" method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="category">Category: </label>
+            <select name="category">
+                <option value="plant">Plant</option>
+                <option value="electronics">Electronics</option>
+                <option value="fashion">Fashion</option>
+                <option value="toys">Toys</option>
+
+            </select>
+            <input type="submit" value="Submit">
+        </div>
+
+    </form>
+
+    
+
+
+
+    <ul>
+        
+        <div class="row">
+
+            {% for listing in auction_listings %}
+
+            <div class="card mx-3" style="width: 18rem;">
+                <img class="card-img-top" src="{{listing.img_url}}" alt="Card image cap">
+                <div class="card-body">
+                  <h5 class="card-title">{{listing.name}}</h5>
+                  <p class="card-text">{{listing.description}}</p>
+                  <h6>Price: ${{listing.price}}</h6>
+                  <a href="{% url 'current_listing' listing.id %}" class="btn btn-primary">View</a>
+                </div>
+            </div>
+
+            {% endfor %}
+
+            
+
+        </div>
+        
+        
+
+        
+        
+
+    </ul>
+    {% if not auction_listings %}
+    <p>No Active Listings for {{category}} category!! </p>
+    {% endif %}
+    
+
+
+{% endblock %}
