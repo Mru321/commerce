@@ -1,4 +1,5 @@
 # commerce
+Django Project
 Consists of the following features:-
  Three core models: Auction Listing, Bid, and Comment.
  User authentication system for login and profile management.
